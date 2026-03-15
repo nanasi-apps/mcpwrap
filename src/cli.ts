@@ -17,7 +17,7 @@ import {
   convertFlagsToInput,
   validateRequiredArgs,
 } from "./utils/args.js";
-import type { McpServerConfig, McpTool, CliResponse, Transport } from "./types/index.js";
+import type { McpServerConfig, McpTool, CliResponse, Transport } from "./types";
 import { formatResponse, shouldUseHumanFormat } from "./utils/formatters.js";
 
 const startTime = Date.now();
