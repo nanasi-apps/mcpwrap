@@ -105,11 +105,12 @@ function detectCategory(tool: McpTool): string {
   return "misc";
 }
 
-function generateCliExample(tool: DiscoveredTool, serverName: string): string {
+function generateCliExample(tool: DiscoveredTool, serverName: string, runner: string): string {
   const requiredArgs = tool.requiredFields ?? [];
+  const cmd = runner ? `${runner} mcpwrap` : "mcpwrap";
 
   if (requiredArgs.length === 0) {
-    return `mcpwrap ${serverName} call --tool ${tool.name}`;
+    return `${cmd} ${serverName} call --tool ${tool.name}`;
   }
 
   const simpleArgs: string[] = [];
@@ -130,10 +131,10 @@ function generateCliExample(tool: DiscoveredTool, serverName: string): string {
 
   if (needsJsonInput && tool.examples.json) {
     const jsonStr = JSON.stringify(tool.examples.json).replace(/"/g, '"');
-    return `mcpwrap ${serverName} call --tool ${tool.name} --input '${jsonStr}'`;
+    return `${cmd} ${serverName} call --tool ${tool.name} --input '${jsonStr}'`;
   }
 
-  return `mcpwrap ${serverName} call --tool ${tool.name} ${simpleArgs.join(" ")}`;
+  return `${cmd} ${serverName} call --tool ${tool.name} ${simpleArgs.join(" ")}`;
 }
 
 function getExampleValue(arg: DiscoveredTool["cliArgs"][number]): string {
@@ -323,7 +324,7 @@ Always echo the changed fields in your response when performing modifications.
 `;
 }
 
-function generateToolMd(category: ToolCategory, serverName: string): string {
+function generateToolMd(category: ToolCategory, serverName: string, runner: string): string {
   const toolList = category.tools.map((t) => `- ${t.name}`).join("\n");
 
   const toolDocs = category.tools
@@ -332,7 +333,7 @@ function generateToolMd(category: ToolCategory, serverName: string): string {
         ? tool.requiredFields.map((f) => `  - ${f}`).join("\n")
         : "  - None";
 
-      const cliExample = generateCliExample(tool, serverName);
+      const cliExample = generateCliExample(tool, serverName, runner);
       const jsonExample = tool.examples.json ? JSON.stringify(tool.examples.json, null, 2) : null;
 
       const jsonSection = jsonExample
@@ -548,7 +549,7 @@ export function generateSkillTemplate(options: InitOptions, tools: McpTool[]): I
   }
 
   for (const category of categories) {
-    const toolMdContent = generateToolMd(category, serverName);
+    const toolMdContent = generateToolMd(category, serverName, options.runner);
     const toolMdPath = join(paths.tools, `${category.name}.md`);
 
     if (!dryRun) {

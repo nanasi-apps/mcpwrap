@@ -26,6 +26,8 @@ export function parseCliArgs(args: string[]): ParsedArgs {
       if (i + 1 < args.length) parsed.outputDir = args[++i];
     } else if (arg === "--skill-name") {
       if (i + 1 < args.length) parsed.skillName = args[++i];
+    } else if (arg === "--runner") {
+      if (i + 1 < args.length) parsed.runner = args[++i];
     } else if (arg === "--force") {
       parsed.force = true;
     } else if (arg === "--dry-run") {

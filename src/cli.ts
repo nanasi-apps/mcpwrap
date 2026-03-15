@@ -17,6 +17,7 @@ import {
   convertFlagsToInput,
   validateRequiredArgs,
 } from "./utils/args.js";
+import { resolveRunner } from "./utils/runner.js";
 import type { McpServerConfig, McpTool, CliResponse, Transport } from "./types";
 import { formatResponse, shouldUseHumanFormat } from "./utils/formatters.js";
 
@@ -139,11 +140,12 @@ Commands:
   <server> list-tools             List tools from a server
   <server> describe --tool <name> Describe a tool
   <server> call --tool <name>    Call a tool with arguments
-  <server> init [--output-dir <dir>] --skill-name <name>
+  <server> init [--output-dir <dir>] --skill-name <name> [--runner <prefix>]
                                   Generate AgentSkills template (prompts if --output-dir omitted)
 
 Global Options:
   --config <path>                Path to OpenCode config file
+  --runner <prefix>              Override execution prefix in generated examples (auto-detected if omitted)
   --debug                        Enable debug mode
   --help, -h                     Show this help
 
@@ -465,10 +467,20 @@ async function handleInit(parsed: ReturnType<typeof parseCliArgs>): Promise<void
 
     const { generateSkillTemplate } = await import("./utils/init.js");
 
+    const detected = resolveRunner(parsed.runner);
+    debugLog(
+      parsed,
+      `runner detection: source=${detected.source} runner=${detected.runner || "(global)"}`,
+    );
+    for (const [key, value] of Object.entries(detected.debug)) {
+      debugLog(parsed, `runner env: ${key}=${value ?? "(unset)"}`);
+    }
+
     const initOptions = {
       outputDir,
       skillName,
       serverName: parsed.server,
+      runner: detected.runner,
       force: parsed.force ?? false,
       dryRun: parsed.dryRun ?? false,
     };

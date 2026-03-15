@@ -125,6 +125,7 @@ export interface ParsedArgs {
   inputFile?: string;
   outputDir?: string;
   skillName?: string;
+  runner?: string;
   force?: boolean;
   dryRun?: boolean;
   debug?: boolean;
@@ -163,6 +164,7 @@ export interface InitOptions {
   outputDir: string;
   skillName: string;
   serverName: string;
+  runner: string;
   force: boolean;
   dryRun: boolean;
 }
