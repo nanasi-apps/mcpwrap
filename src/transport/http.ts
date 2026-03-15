@@ -1,4 +1,4 @@
-import type { Transport } from "../types/index.ts";
+import type { Transport } from "../types/index.js";
 
 interface JsonRpcResponse {
   result?: unknown;

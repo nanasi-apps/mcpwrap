@@ -143,6 +143,8 @@ export interface CliArgDefinition {
 
 export type ToolRisk = "read" | "write" | "unknown";
 
+export type OutputFormat = "json" | "human";
+
 export interface DiscoveredTool {
   name: string;
   description: string;

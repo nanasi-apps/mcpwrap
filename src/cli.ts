@@ -8,16 +8,17 @@ import {
   ConfigError,
   loadMcpAuth,
   getMcpAuthToken,
-} from "./config/loader.ts";
-import { StdioTransport } from "./transport/stdio.ts";
-import { HttpTransport, HttpTransportError } from "./transport/http.ts";
+} from "./config/loader.js";
+import { StdioTransport } from "./transport/stdio.js";
+import { HttpTransport, HttpTransportError } from "./transport/http.js";
 import {
   parseCliArgs,
   generateCliArgsFromSchema,
   convertFlagsToInput,
   validateRequiredArgs,
-} from "./utils/args.ts";
-import type { McpServerConfig, McpTool, CliResponse, Transport } from "./types/index.ts";
+} from "./utils/args.js";
+import type { McpServerConfig, McpTool, CliResponse, Transport } from "./types/index.js";
+import { formatResponse, shouldUseHumanFormat } from "./utils/formatters.js";
 
 const startTime = Date.now();
 
@@ -27,6 +28,14 @@ function debugLog(parsed: ReturnType<typeof parseCliArgs>, message: string): voi
   if (parsed.debug) {
     console.error(`[debug] ${message}`);
   }
+}
+
+function getOutputFormat(): "json" | "human" {
+  return shouldUseHumanFormat() ? "human" : "json";
+}
+
+function outputResponse(response: CliResponse): void {
+  console.log(formatResponse(response, getOutputFormat()));
 }
 
 async function main(): Promise<void> {
@@ -130,8 +139,8 @@ Commands:
   <server> list-tools             List tools from a server
   <server> describe --tool <name> Describe a tool
   <server> call --tool <name>    Call a tool with arguments
-  <server> init --output-dir <dir> --skill-name <name>
-                                  Generate AgentSkills template
+  <server> init [--output-dir <dir>] --skill-name <name>
+                                  Generate AgentSkills template (prompts if --output-dir omitted)
 
 Global Options:
   --config <path>                Path to OpenCode config file
@@ -172,7 +181,7 @@ async function handleListServers(parsed: ReturnType<typeof parseCliArgs>): Promi
     },
   };
 
-  console.log(JSON.stringify(response, null, 2));
+  outputResponse(response);
 }
 
 async function handleListTools(parsed: ReturnType<typeof parseCliArgs>): Promise<void> {
@@ -215,7 +224,7 @@ async function handleListTools(parsed: ReturnType<typeof parseCliArgs>): Promise
       },
     };
 
-    console.log(JSON.stringify(response, null, 2));
+    outputResponse(response);
   } finally {
     await transport.disconnect();
   }
@@ -271,7 +280,7 @@ async function handleDescribe(parsed: ReturnType<typeof parseCliArgs>): Promise<
       },
     };
 
-    console.log(JSON.stringify(response, null, 2));
+    outputResponse(response);
   } finally {
     await transport.disconnect();
   }
@@ -414,7 +423,7 @@ async function handleCall(parsed: ReturnType<typeof parseCliArgs>): Promise<void
       },
     };
 
-    console.log(JSON.stringify(response, null, 2));
+    outputResponse(response);
   } finally {
     await transport.disconnect();
   }
@@ -425,12 +434,18 @@ async function handleInit(parsed: ReturnType<typeof parseCliArgs>): Promise<void
     throw new Error("Server name is required");
   }
 
+  let baseDir: string;
+
   if (!parsed.outputDir) {
-    throw new Error("Output directory is required (--output-dir)");
+    const { promptForLocation } = await import("./utils/location.js");
+    const location = await promptForLocation();
+    baseDir = location.path;
+  } else {
+    baseDir = parsed.outputDir;
   }
 
   const skillName = parsed.skillName ?? parsed.server;
-  const outputDir = join(parsed.outputDir, skillName);
+  const outputDir = join(baseDir, skillName);
 
   const config = loadOpenCodeConfig(parsed.config);
   const serverConfig = getMcpServer(config, parsed.server);
@@ -448,7 +463,7 @@ async function handleInit(parsed: ReturnType<typeof parseCliArgs>): Promise<void
       tools: McpTool[];
     };
 
-    const { generateSkillTemplate } = await import("./utils/init.ts");
+    const { generateSkillTemplate } = await import("./utils/init.js");
 
     const initOptions = {
       outputDir,
@@ -484,7 +499,7 @@ async function handleInit(parsed: ReturnType<typeof parseCliArgs>): Promise<void
       },
     };
 
-    console.log(JSON.stringify(response, null, 2));
+    outputResponse(response);
   } finally {
     await transport.disconnect();
   }
@@ -537,7 +552,7 @@ function createTransport(
 }
 
 function handleError(response: CliResponse): void {
-  console.log(JSON.stringify(response, null, 2));
+  console.log(formatResponse(response, getOutputFormat()));
   process.exit(response.meta.exit_code);
 }
 
@@ -636,4 +651,6 @@ function buildErrorResponse(error: unknown, parsed: ReturnType<typeof parseCliAr
   };
 }
 
-await main();
+void (async () => {
+  await main();
+})();

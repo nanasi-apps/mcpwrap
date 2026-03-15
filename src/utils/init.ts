@@ -1,6 +1,6 @@
 import { writeFileSync, mkdirSync, existsSync } from "node:fs";
 import { join } from "node:path";
-import type { McpTool, DiscoveredTool, ToolRisk, InitOptions } from "../types/index.ts";
+import type { McpTool, DiscoveredTool, ToolRisk, InitOptions } from "../types/index.js";
 
 export class InitError extends Error {
   code: string;
@@ -324,7 +324,6 @@ Always echo the changed fields in your response when performing modifications.
 }
 
 function generateToolMd(category: ToolCategory, serverName: string): string {
-  console.log(`Generating tool docs for category ${category.name} with server ${serverName}`);
   const toolList = category.tools.map((t) => `- ${t.name}`).join("\n");
 
   const toolDocs = category.tools
@@ -599,11 +598,7 @@ export function generateSkillTemplate(options: InitOptions, tools: McpTool[]): I
   }
 
   for (const category of categories) {
-    const categoryManifestContent = generateCategoryManifestMd(
-      category,
-      serverName,
-      timestamp,
-    );
+    const categoryManifestContent = generateCategoryManifestMd(category, serverName, timestamp);
     const categoryManifestPath = join(paths.references, `${category.name}.md`);
 
     if (!dryRun) {

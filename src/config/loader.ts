@@ -1,7 +1,7 @@
 import { readFileSync, existsSync } from "node:fs";
 import { join } from "node:path";
 import { homedir } from "node:os";
-import type { OpenCodeConfig, McpServerConfig } from "../types/index.ts";
+import type { OpenCodeConfig, McpServerConfig } from "../types/index.js";
 
 const CONFIG_PATHS = [
   join(homedir(), ".config", "opencode", "opencode.json"),

@@ -1,6 +1,6 @@
 import { spawn } from "node:child_process";
 import { randomUUID } from "node:crypto";
-import type { Transport } from "../types/index.ts";
+import type { Transport } from "../types/index.js";
 
 interface PendingRequest {
   resolve: (value: unknown) => void;

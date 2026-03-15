@@ -3,7 +3,7 @@ import type {
   McpJsonSchemaProperty,
   CliArgDefinition,
   McpTool,
-} from "../types/index.ts";
+} from "../types/index.js";
 
 export function parseCliArgs(args: string[]): ParsedArgs {
   const parsed: ParsedArgs = {

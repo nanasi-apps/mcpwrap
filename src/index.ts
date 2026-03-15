@@ -1,4 +1,4 @@
-export * from "./types/index.ts";
-export { loadOpenCodeConfig, getMcpServers, getMcpServer, ConfigError } from "./config/loader.ts";
-export { StdioTransport } from "./transport/stdio.ts";
-export { HttpTransport, HttpTransportError } from "./transport/http.ts";
+export * from "./types/index.js";
+export { loadOpenCodeConfig, getMcpServers, getMcpServer, ConfigError } from "./config/loader.js";
+export { StdioTransport } from "./transport/stdio.js";
+export { HttpTransport, HttpTransportError } from "./transport/http.js";
