@@ -1,4 +1,4 @@
-# node dist/cli.js
+# mcpwrap
 
 MCP (Model Context Protocol) to CLI bridge tool. Use OpenCode's MCP configuration directly from the command line.
 
@@ -14,34 +14,34 @@ MCP (Model Context Protocol) to CLI bridge tool. Use OpenCode's MCP configuratio
 
 ```bash
 # Using pnpm (recommended)
-pnpm add -g node dist/cli.js
+pnpm add -g mcpwrap
 
 # Or use directly with npx
-npx node dist/cli.js list-servers
+npx mcpwrap list-servers
 ```
 
 ## Quick Start
 
 ```bash
 # List configured MCP servers
-node dist/cli.js list-servers
+mcpwrap list-servers
 
 # List tools from a server
-node dist/cli.js <server> list-tools
+mcpwrap <server> list-tools
 
 # Describe a tool (see required arguments)
-node dist/cli.js <server> describe --tool <tool-name>
+mcpwrap <server> describe --tool <tool-name>
 
 # Call a tool
-node dist/cli.js <server> call --tool <tool-name> --arg value
+mcpwrap <server> call --tool <tool-name> --arg value
 
 # Generate AgentSkills template
-node dist/cli.js <server> init --output-dir ./skills --skill-name my-skill
+mcpwrap <server> init --output-dir ./skills --skill-name my-skill
 ```
 
 ## Configuration
 
-node dist/cli.js reads MCP server configurations from OpenCode's config file:
+mcpwrap reads MCP server configurations from OpenCode's config file:
 
 **Default locations (in order of priority):**
 
@@ -108,35 +108,35 @@ node dist/cli.js reads MCP server configurations from OpenCode's config file:
 ### 1. JSON String
 
 ```bash
-node dist/cli.js notion call --tool pages.get --input '{"pageId":"123"}'
+mcpwrap notion call --tool pages.get --input '{"pageId":"123"}'
 ```
 
 ### 2. JSON File
 
 ```bash
-node dist/cli.js notion call --tool pages.get --input-file payload.json
+mcpwrap notion call --tool pages.get --input-file payload.json
 ```
 
 ### 3. CLI Arguments (Auto-generated from schema)
 
 ```bash
 # These are equivalent:
-node dist/cli.js notion call --tool pages.get --pageId 123
-node dist/cli.js notion call --tool pages.get --page-id 123
-node dist/cli.js notion call --tool pages.get --page_id 123
-node dist/cli.js notion call --tool pages.get --pageid 123
+mcpwrap notion call --tool pages.get --pageId 123
+mcpwrap notion call --tool pages.get --page-id 123
+mcpwrap notion call --tool pages.get --page_id 123
+mcpwrap notion call --tool pages.get --pageid 123
 ```
 
 ### Array Arguments
 
 ```bash
-node dist/cli.js notion call --tool tags.add --tag a --tag b --tag c
+mcpwrap notion call --tool tags.add --tag a --tag b --tag c
 ```
 
 ### JSON Object Arguments
 
 ```bash
-node dist/cli.js notion call --tool pages.create --properties-json '{"icon":"🔥"}'
+mcpwrap notion call --tool pages.create --properties-json '{"icon":"🔥"}'
 ```
 
 ## Output Format
@@ -176,7 +176,7 @@ All responses are structured JSON:
     "hint": "Use: --pageid <value>",
     "next_action": {
       "type": "command",
-      "command": "node dist/cli.js notion describe --tool pages.get"
+      "command": "mcpwrap notion describe --tool pages.get"
     }
   },
   "meta": {
@@ -200,7 +200,7 @@ All responses are structured JSON:
 
 ## Authentication
 
-node dist/cli.js reuses OpenCode's authentication:
+mcpwrap reuses OpenCode's authentication:
 
 1. Check if auth token exists in `~/.local/share/opencode/mcp-auth.json`
 2. If valid (not expired), use it automatically
@@ -210,8 +210,8 @@ node dist/cli.js reuses OpenCode's authentication:
 # Authenticate via OpenCode first
 opencode mcp auth <server>
 
-# Then use node dist/cli.js
-node dist/cli.js <server> list-tools
+# Then use mcpwrap
+mcpwrap <server> list-tools
 ```
 
 ## Development

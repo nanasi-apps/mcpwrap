@@ -1,6 +1,6 @@
 ## 目的
 
-既存の **OpenCode の MCP 設定** をそのまま流用して、`node dist/cli.js` から次をできるようにすることです。
+既存の **OpenCode の MCP 設定** をそのまま流用して、`mcpwrap` から次をできるようにすることです。
 
 - server 一覧を見る
 - tool 一覧を見る
@@ -41,11 +41,11 @@
 ## 一覧
 
 ```bash
-node dist/cli.js list-servers
-node dist/cli.js <server> list-tools
-node dist/cli.js <server> describe --tool <tool>
-node dist/cli.js <server> call --tool <tool> [input...]
-node dist/cli.js <server> init --output-dir <dir> --skill-name <name>
+mcpwrap list-servers
+mcpwrap <server> list-tools
+mcpwrap <server> describe --tool <tool>
+mcpwrap <server> call --tool <tool> [input...]
+mcpwrap <server> init --output-dir <dir> --skill-name <name>
 ```
 
 ## shorthand
@@ -53,7 +53,7 @@ node dist/cli.js <server> init --output-dir <dir> --skill-name <name>
 `call` は省略可能にしてよいです。
 
 ```bash
-node dist/cli.js <server> --tool <tool> [input...]
+mcpwrap <server> --tool <tool> [input...]
 ```
 
 これは内部的に `call` と同じ扱いにします。
@@ -70,7 +70,7 @@ node dist/cli.js <server> --tool <tool> [input...]
 
 ## source of truth
 
-`node dist/cli.js` 独自の server config は持たない。
+`mcpwrap` 独自の server config は持たない。
 
 **OpenCode config を唯一の正本**にします。
 
@@ -86,7 +86,7 @@ node dist/cli.js <server> --tool <tool> [input...]
 
 ## MVPの扱い
 
-`node dist/cli.js` は OAuth の主担当ではなく、**OpenCode の既存認証状態を利用する client** として振る舞います。
+`mcpwrap` は OAuth の主担当ではなく、**OpenCode の既存認証状態を利用する client** として振る舞います。
 
 ---
 
@@ -99,19 +99,19 @@ node dist/cli.js <server> --tool <tool> [input...]
 ### 1. JSON 文字列
 
 ```bash
-node dist/cli.js notion call --tool pages.get --input '{"pageId":"123"}'
+mcpwrap notion call --tool pages.get --input '{"pageId":"123"}'
 ```
 
 ### 2. JSON ファイル
 
 ```bash
-node dist/cli.js notion call --tool pages.get --input-file payload.json
+mcpwrap notion call --tool pages.get --input-file payload.json
 ```
 
 ### 3. 引数展開
 
 ```bash
-node dist/cli.js notion call --tool pages.get --pageid 123
+mcpwrap notion call --tool pages.get --pageid 123
 ```
 
 ---
@@ -141,7 +141,7 @@ tool の input schema を見て、CLI フラグを **schema の canonical key** 
 ### 例
 
 ```bash
-node dist/cli.js notion call --tool pages.get --pageid 123
+mcpwrap notion call --tool pages.get --pageid 123
 ```
 
 これは内部で
@@ -317,7 +317,7 @@ MVPでは escape hatch を使います。
 ## コマンド
 
 ```bash
-node dist/cli.js <server> init --output-dir ./skill-out --skill-name notion
+mcpwrap <server> init --output-dir ./skill-out --skill-name notion
 ```
 
 ## 目的
@@ -412,7 +412,7 @@ debug / transport trace / raw diagnostics 用。
     "hint": "Use: --pageid <value>",
     "next_action": {
       "type": "command",
-      "command": "node dist/cli.js notion describe --tool pages.get"
+      "command": "mcpwrap notion describe --tool pages.get"
     }
   },
   "meta": {
@@ -493,7 +493,7 @@ INTERNAL_ERROR
   "hint": "Did you mean '--pageid'?",
   "next_action": {
     "type": "command",
-    "command": "node dist/cli.js notion describe --tool pages.get"
+    "command": "mcpwrap notion describe --tool pages.get"
   }
 }
 ```
@@ -543,7 +543,7 @@ INTERNAL_ERROR
 # debug モード
 
 ```bash
-node dist/cli.js notion call --tool pages.get --pageid 123 --debug
+mcpwrap notion call --tool pages.get --pageid 123 --debug
 ```
 
 このとき、
