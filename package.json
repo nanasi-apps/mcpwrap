@@ -1,0 +1,25 @@
+{
+  "name": "mcpwrap",
+  "version": "0.1.0",
+  "bin": {
+    "mcpwrap": "./dist/cli.js"
+  },
+  "type": "module",
+  "scripts": {
+    "build": "tsc && vp build",
+    "preview": "vp preview",
+    "prepare": "vp config"
+  },
+  "devDependencies": {
+    "@types/node": "^25.5.0",
+    "typescript": "~5.9.3",
+    "vite-plus": "latest"
+  },
+  "packageManager": "pnpm@10.32.1",
+  "pnpm": {
+    "overrides": {
+      "vite": "npm:@voidzero-dev/vite-plus-core@latest",
+      "vitest": "npm:@voidzero-dev/vite-plus-test@latest"
+    }
+  }
+}
